@@ -24,9 +24,26 @@ with your VPM client like ALCOM.
 
 ### As a standalone library
 
-You can use contents in the `Patcher` directory as a `.netstandard2.1` library.
+You can use this library as a `.netstandard2.1` library.
 You can call `Anatawa12.HarmonyAppleSilicon.Patcher.Patch()` to apply the patches for Harmony loaded to the current AppDomain,
 or use other overloads to apply patches in other ways.
+
+## Building / Development
+
+At first, this project uses symbolic links to link the `Native~` directory to the `UnityApplier` directory.
+If you're on Windows, you need extra care to create symbolic links.
+
+### Building for Unity
+
+To build this package for Unity, you need to compile the native library written in Rust so you need to have Rust installed.
+
+And then run `cargo build --release` in the `Native~` directory to build the native library.
+
+### Building for .NET
+
+To build this package for .NET, you need to have both the .NET SDK and the Rust toolchain installed.
+
+Run `cargo build --release` in the `Native~` directory to build the native library, and then run `dotnet build` in the `Build` directory to build the C# code.
 
 ## Project structure
 
