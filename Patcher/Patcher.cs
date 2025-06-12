@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
@@ -47,7 +49,58 @@ namespace Anatawa12.AppleSiliconHarmony
         /// <summary>
         /// Patches the given assembly if it is the Harmony assembly and if patching is needed.
         /// </summary>
+        public static void Patch()
+        {
+            var errors = new List<(Assembly, string)>();
+            TryPatch((assembly, msg) =>
+            {
+                if (!msg.EndsWith("cancelled."))
+                    errors.Add((assembly, msg));
+            });
+            if (errors.Count > 0)
+                throw new InvalidOperationException($"Failed to patch assemblies:\n" + 
+                                                    string.Join("\n", errors.Select(e => $"{e.Item1.FullName}: {e.Item2}")));
+        }
+
+        /// <summary>
+        /// Patches all assemblies in the current AppDomain that contain Harmony (or MonoMod).
+        /// </summary>
+        /// <param name="errorHandler">The action to receive error messages if patching fails in recoverable way.</param>
+        /// <returns>The number of assemblies that were successfully patched.</returns>
+        public static int TryPatch(Action<Assembly, string> errorHandler = null)
+        {
+            var patchedCount = 0;
+
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (TryPatchAssembly(assembly, errorHandler != null ? (msg) => errorHandler(assembly, msg) : null))
+                {
+                    patchedCount++;
+                }
+            }
+
+            return patchedCount;
+        }
+
+        /// <summary>
+        /// Patches the given assembly if it is the Harmony assembly and if patching is needed.
+        /// </summary>
         /// <param name="assembly">The assembly that contains Harmony (or MonoMod).</param>
+        /// <exception cref="InvalidOperationException">Thrown if patching fails. This includes cases where the assembly is not the Harmony assembly, or if the patching process encounters an error.</exception>
+        public static void PatchAssembly(Assembly assembly)
+        {
+            var errors = new List<string>();
+            TryPatchAssembly(assembly, errors.Add);
+            if (errors.Count != 0)
+                throw new InvalidOperationException($"Failed to patch assembly {assembly.FullName}:\n" + 
+                                                    string.Join("\n", errors));
+        }
+
+        /// <summary>
+        /// Patches the given assembly if it is the Harmony assembly and if patching is needed.
+        /// </summary>
+        /// <param name="assembly">The assembly that contains Harmony (or MonoMod).</param>
+        /// <param name="errorHandler">The action to receive error messages if patching fails in recoverable way.</param>
         public static bool TryPatchAssembly(Assembly assembly, Action<string> errorHandler = null)
         {
             if (assembly == null) throw new ArgumentNullException(nameof(assembly));
@@ -75,7 +128,7 @@ namespace Anatawa12.AppleSiliconHarmony
             var platformType = asm.GetType("MonoMod.Utils.Platform");
             if (platformType == null || !platformType.IsEnum)
             {
-                errorHandler("Failed to find MonoMod.Utils.Platform enum type. Patching CurrentPlatform aborted.");
+                errorHandler("Failed to find MonoMod.Utils.Platform enum type. Patching CurrentPlatform cancelled.");
                 return false;
             }
 
@@ -171,7 +224,7 @@ namespace Anatawa12.AppleSiliconHarmony
         {
             if (NativeDetourDataTypeInfo.Create(assembly) is not { } nativeDetourDataTypeInfo)
             {
-                errorHandler("Failed to find MonoMod.RuntimeDetour.NativeDetourData type. Patching WriteXorExecute aborted.");
+                errorHandler("Failed to find MonoMod.RuntimeDetour.NativeDetourData type. Patching WriteXorExecute cancelled.");
                 return false;
             }
 
@@ -334,7 +387,7 @@ namespace Anatawa12.AppleSiliconHarmony
             var nativePlatformType = assembly.GetType(typeName);
             if (nativePlatformType == null)
             {
-                errorHandler($"Failed to find {typeName} type. Patching WriteXorExecute aborted.");
+                errorHandler($"Failed to find {typeName} type. Patching WriteXorExecute cancelled.");
                 return false;
             }
 
