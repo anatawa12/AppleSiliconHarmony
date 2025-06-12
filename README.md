@@ -38,4 +38,6 @@ This project is consists of three parts:
 
 ## License
 
-MIT License. See [LICENSE.txt](LICENSE.txt) for details & copyright information.
+Copyright (c) 2025 anatawa12
+
+Mozilla Public License 2.0. See [LICENSE.txt](LICENSE.txt) for details.
