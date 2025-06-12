@@ -5,3 +5,11 @@ edition = "2024"
 
 [lib]
 crate-type = ['cdylib']
+
+[profile.dev]
+panic = "abort"
+debug-assertions = false
+
+[profile.release]
+panic = "abort"
+strip = true
