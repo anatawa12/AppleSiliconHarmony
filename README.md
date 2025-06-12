@@ -24,9 +24,35 @@ with your VPM client like ALCOM.
 
 ### As a standalone library
 
-You can use this library as a `.netstandard2.1` library.
+You can use this library as a `.netstandard2.1` library. You can download the compiled library from the releases page, or build from the source code. (See section below.)
+
 You can call `Anatawa12.HarmonyAppleSilicon.Patcher.Patch()` to apply the patches for Harmony loaded to the current AppDomain,
 or use other overloads to apply patches in other ways.
+
+## Limitations
+
+- W^X patch is only available for mono runtime.
+  It does not support .NET Core or .NET 5+ runtime.
+  This is just because my original intention was to support Unity, and Unity uses mono runtime.
+  It's welcome for PR to support .NET Core or .NET 5+ runtime.
+
+- W^X patch only works when Hardened Runtime is disabled.
+
+  This is because we need to use `pthread_jit_write_protect_np` to apply the patches,
+  However, `pthread_jit_write_protect_np` is not available when Hardened Runtime is enabled.
+
+- For Unity usage, if some user of `Harmony` is patching on `[InitializeOnLoad]` method, it can be ran before this patch is applied.
+  Please consider move to `EditorApplication.delayCall`, `EditorApplication.update`, or `AssemblyReloadEvents.afterAssemblyReload` to run Harmony patches after this patch for Harmony is applied.
+- For any usage, you have to call `Patcher.Patch()` before Harmony is loaded / used in any way.
+  Especially, Rosetta2 detection patch cannot be applied after Harmony is loaded.
+
+## Project structure
+
+This project is consists of three parts:
+
+- `Native~` - The native library that actually applies the patches instead of C# code.
+- `Patcher` - The C# code that applies the patches.
+- `UnityApplier` - The Unity-specific code that applies the patches when Unity starts or Unity reloads assemblies.
 
 ## Building / Development
 
@@ -45,13 +71,18 @@ To build this package for .NET, you need to have both the .NET SDK and the Rust 
 
 Run `cargo build --release` in the `Native~` directory to build the native library, and then run `dotnet build` in the `Build` directory to build the C# code.
 
-## Project structure
+## Behavior Changes this patch makes for CoreMod and Harmony
 
-This project is consists of three parts:
+Basically, this patch does not change the behavior of Harmony or CoreMod, but it adds some features to support Apple Silicon.
 
-- `Native~` - The native library that actually applies the patches instead of C# code.
-- `Patcher` - The C# code that applies the patches.
-- `UnityApplier` - The Unity-specific code that applies the patches when Unity starts or Unity reloads assemblies.
+However, we need to change the behavior of CoreMod a little bit to support Apple Silicon's `W^X` memory protection.
+
+- The `MakeWritable`, `MakeExecutable`, `FlushICache` methods on `IDetourNativePlatform` become no-op on Apple Silicon native.
+  Therefore, you cannot write code to edit code memory directly. This is limitation of `W^X` memory protection.
+- `IDetourNativePlatform.Apply` will manage the memory protection, and flush the instruction cache.
+  Therefore, you won't receive memory protection error when you apply a detour on Apple Silicon native.
+- The `IDetourNativePlatform.Copy` method will not be supported.
+  Please use `IDetourNativePlatform.Apply` instead to copy a detour.
 
 ## License
 
