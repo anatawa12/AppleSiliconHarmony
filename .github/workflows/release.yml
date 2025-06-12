@@ -28,7 +28,7 @@ permissions: write-all
 
 jobs:
   create-release:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     environment:
       name: master branch
     outputs:
