@@ -73,7 +73,7 @@ namespace Anatawa12.AppleSiliconHarmony
             }
 
             if (!Enum.TryParse(platformType, "Unknown", out var unknownPlatform)
-                || !Enum.TryParse(platformType, "ARN", out var armPlatform))
+                || !Enum.TryParse(platformType, "ARM", out var armPlatform))
             {
                 errorHandler("Failed to find 'Unknown' or 'ARM' value in MonoMod.Utils.Platform enum type. Patching CurrentPlatform aborted.");
                 return false;
