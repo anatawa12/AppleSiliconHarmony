@@ -35,9 +35,6 @@ jobs:
       version: ${{ steps.update-version.outputs.version }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.MASTER_GITHUB_PAT }}
-          submodules: recursive
       - uses: anatawa12/something-releaser@v3
       - uses: snow-actions/git-config-user@v1.0.0
 
