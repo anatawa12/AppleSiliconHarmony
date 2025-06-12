@@ -1,0 +1,8 @@
+{
+  "releaseChanger": [
+    {
+      "type": "npm",
+      "path": "package.json"
+    }
+  ]
+}
