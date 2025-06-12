@@ -1,0 +1,18 @@
+{
+    "name": "com.anatawa12.apple-silicon-harmony.unity-applier",
+    "rootNamespace": "Anatawa12.AppleSiliconHarmony",
+    "references": [
+        "com.anatawa12.apple-silicon-harmony.patcher"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
