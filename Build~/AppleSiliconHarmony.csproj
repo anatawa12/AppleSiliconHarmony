@@ -11,6 +11,9 @@
 
   <ItemGroup>
     <Compile Include="..\Patcher\*.cs" />
+    <Content Include="..\Native~\target\aarch64-apple-darwin\release\libapple_silicon_harmony_native.dylib">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
