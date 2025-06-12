@@ -1,0 +1,14 @@
+{
+    "name": "com.anatawa12.apple-silicon-harmony.patcher",
+    "rootNamespace": "Anatawa12.AppleSiliconHarmony",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}
