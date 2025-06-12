@@ -210,6 +210,9 @@ namespace Anatawa12.AppleSiliconHarmony
         // We need to patch the entire MonoMod to support W^X JIT Permission
         private static bool TryPatchWriteXorExecute(Assembly assembly, Action<string> errorHandler)
         {
+            // return false silently if the runtime is not mono
+            if (Type.GetType("Mono.Runtime") == null) return false;
+
             var patched = false;
             patched |= TryPatchNativeARMPlatformMethods(assembly, errorHandler);
             patched |= TryPatchNativeMonoPlatformMethods(assembly, errorHandler);
