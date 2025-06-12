@@ -1,6 +1,6 @@
 {
   "name": "com.anatawa12.apple-silicon-harmony",
-  "version": "0.1.0-beta.2",
+  "version": "0.1.0",
   "displayName": "Harmony Patches for Apple Silicon native & Rosetta",
   "legacyPackages": ["com.anatawa12.harmonyfix"],
   "description": "The package contains the patches of Harmony to support Apple Silicon native W^X limitations and to fix Rosetta 2 environment detection bugs."
