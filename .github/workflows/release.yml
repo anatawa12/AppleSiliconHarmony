@@ -90,7 +90,7 @@ jobs:
         run: mkdir build
 
       - name: Build rust crate
-        working-directory: Native~
+        working-directory: 'Native~'
         run: cargo build --release
 
       # region vpm release
@@ -104,7 +104,21 @@ jobs:
           path: build/${{ env.PKG_NAME }}-${{ env.VERSION }}.zip
       # endregion vpm release
 
+      # region dll release
+      - name: Build DLL
+        working-directory: 'Build~'
+        run: dotnet publish -c Release
+      - name: Copy DLL to build folder
+        run: cp Build~/bin/Release/netstandard2.1/publish/{AppleSiliconHarmony.dll,libapple_silicon_harmony_native.dylib} build/
+      # endregion dll release
+
       # endregion building
+
+      - name: Upload Build Assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-assets
+          path: build/
 
       - name: Publish Release
         if: ${{ inputs.publish }}
@@ -124,6 +138,8 @@ jobs:
             --notes "version $VERSION" \
             "package.json" \
             "build/$PKG_NAME-$VERSION.zip" \
+            "build/libapple_silicon_harmony_native.dylib" \
+            "build/AppleSiliconHarmony.dll" \
 
       - name: prepare next release & push
         if: inputs.publish && !fromJSON(env.PRERELEASE)
