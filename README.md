@@ -24,7 +24,7 @@ with your VPM client like ALCOM.
 
 ### As a standalone library
 
-You can use contents in the `Patcher` directory as a `.netstandard2.0` library.
+You can use contents in the `Patcher` directory as a `.netstandard2.1` library.
 You can call `Anatawa12.HarmonyAppleSilicon.Patcher.Patch()` to apply the patches for Harmony loaded to the current AppDomain,
 or use other overloads to apply patches in other ways.
 
