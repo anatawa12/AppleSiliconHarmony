@@ -34,7 +34,7 @@ jobs:
     outputs:
       version: ${{ steps.update-version.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: anatawa12/something-releaser@v3
       - uses: snow-actions/git-config-user@v1.0.0
 
